@@ -7,6 +7,7 @@
     <list default="true" id="7acd48c7-01d8-4bdc-8dd0-2c78eda1d1e0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insukoon/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/insukoon/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insukoon/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insukoon/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,12 +24,18 @@
       </list>
     </option>
   </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2csKGB4zL2O7oUCNPkC9f1uvChf" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -47,7 +54,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.django.DjangoModulesConfigurable",
+    "settings.editor.selected.configurable": "actions.on.save",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -97,7 +104,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1708894748722</updated>
-      <workItem from="1708894753310" duration="12693000" />
+      <workItem from="1708894753310" duration="12856000" />
+      <workItem from="1709000426846" duration="7802000" />
     </task>
     <servers />
   </component>
