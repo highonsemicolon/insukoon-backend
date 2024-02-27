@@ -1,9 +1,11 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+
 from .serializers import UserSerializer, TokenSerializer
 
 
@@ -11,11 +13,18 @@ class UserRegistrationAPIView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        user_type = request.data.get('user_type')
+        if user_type not in ['parent', 'school']:
+            return Response({'error': 'Invalid user type'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
+            count = User.objects.filter(username__startswith=f'insukoon_{user_type}_').count() + 1
+            username = f"insukoon_{user_type}_{count}"
+
+            user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            return Response({'token': token.key, 'username': username}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
