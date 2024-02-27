@@ -8,7 +8,7 @@ class ParentProfile(models.Model):
     # Student details
     student_first_name = models.CharField(max_length=100)
     student_last_name = models.CharField(max_length=100)
-    student_dob = models.DateField()
+    student_dob = models.DateField(default='2005-11-01')
     student_gender = models.CharField(max_length=10)
     student_country = models.CharField(max_length=100)
     student_state = models.CharField(max_length=100)
