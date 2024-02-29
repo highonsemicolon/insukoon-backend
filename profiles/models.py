@@ -37,6 +37,9 @@ class ParentProfile(models.Model):
 
 
 class SchoolProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # School details
     name = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
@@ -59,20 +62,20 @@ class SchoolProfile(models.Model):
     poc_email = models.EmailField()
 
     # Student details
-    total_students = models.PositiveIntegerField()
-    avg_class_size = models.PositiveIntegerField()
-    kg_students = models.PositiveIntegerField()
-    grade_1_5_students = models.PositiveIntegerField()
-    grade_6_8_students = models.PositiveIntegerField()
-    grade_9_12_students = models.PositiveIntegerField()
+    total_students = models.PositiveIntegerField(default=0)
+    avg_class_size = models.PositiveIntegerField(default=0)
+    kg_students = models.PositiveIntegerField(default=0)
+    grade_1_5_students = models.PositiveIntegerField(default=0)
+    grade_6_8_students = models.PositiveIntegerField(default=0)
+    grade_9_12_students = models.PositiveIntegerField(default=0)
 
     # Staff details
-    total_teachers = models.PositiveIntegerField()
-    total_non_teaching_staff = models.PositiveIntegerField()
-    kg_teachers = models.PositiveIntegerField()
-    grade_1_5_teachers = models.PositiveIntegerField()
-    grade_6_8_teachers = models.PositiveIntegerField()
-    grade_9_12_teachers = models.PositiveIntegerField()
+    total_teachers = models.PositiveIntegerField(default=0)
+    total_non_teaching_staff = models.PositiveIntegerField(default=0)
+    kg_teachers = models.PositiveIntegerField(default=0)
+    grade_1_5_teachers = models.PositiveIntegerField(default=0)
+    grade_6_8_teachers = models.PositiveIntegerField(default=0)
+    grade_9_12_teachers = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"School Profile: {self.name}"
