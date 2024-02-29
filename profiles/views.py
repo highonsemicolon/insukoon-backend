@@ -13,50 +13,40 @@ class UserProfileView(APIView):
         return Response({'username': user.username, "user": user.email}, status=status.HTTP_200_OK)
 
 
-class ParentProfileDetailView(APIView):
+class ProfileDetailView(APIView):
+    profile_model = None
+    serializer_class = None
+
     def get(self, request):
-        user = request.user  # Assuming the user is authenticated
+        user = request.user
         try:
-            profile = ParentProfile.objects.get(user=user)
-            serializer = ParentProfileSerializer(profile)
+            profile = self.profile_model.objects.get(user=user)
+            serializer = self.serializer_class(profile)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except ParentProfile.DoesNotExist:
-            return Response({"error": "Parent profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except self.profile_model.DoesNotExist:
+            return Response({"error": f"{self.profile_model.__name__} profile does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         user = request.user
         try:
-            profile, created = ParentProfile.objects.get_or_create(user_id=user.id)
-            serializer = ParentProfileSerializer(profile, data=request.data, partial=True)
+            profile, created = self.profile_model.objects.get_or_create(user_id=user.id)
+            serializer = self.serializer_class(profile, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except ParentProfile.DoesNotExist:
-            return Response({"error": "Parent profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except self.profile_model.DoesNotExist:
+            return Response({"error": f"{self.profile_model.__name__} profile does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
-class SchoolProfileDetailView(APIView):
-    def get(self, request):
-        user = request.user
-        try:
-            profile = SchoolProfile.objects.get(user_id=user.id)
-            serializer = SchoolProfileSerializer(profile)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except SchoolProfile.DoesNotExist:
-            return Response({"error": "School profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
+class ParentProfileDetailView(ProfileDetailView):
+    profile_model = ParentProfile
+    serializer_class = ParentProfileSerializer
 
-    def post(self, request):
-        user = request.user
-        try:
-            profile, created = SchoolProfile.objects.get_or_create(user_id=user.id)
-            serializer = SchoolProfileSerializer(profile, data=request.data, partial=True)
 
-            if serializer.is_valid():
-                serializer.save()
-                print("Working...")
-                return Response(serializer.validated_data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except SchoolProfile.DoesNotExist:
-            return Response({"error": "School profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
+class SchoolProfileDetailView(ProfileDetailView):
+    profile_model = SchoolProfile
+    serializer_class = SchoolProfileSerializer
