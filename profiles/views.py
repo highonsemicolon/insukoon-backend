@@ -17,8 +17,20 @@ class ProfileDetailView(APIView):
     profile_model = None
     serializer_class = None
 
+    def get_profile(self, user):
+        try:
+            print(self.profile_model.objects.get(user_id=user.id))
+            return self.profile_model.objects.get(user_id=user.id)
+        except self.profile_model.DoesNotExist:
+            return None
+
     def get(self, request):
         user = request.user
+        profile = self.get_profile(user)
+        if profile is None:
+            return Response({"error": f"{self.profile_model.__name__} profile does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
+
         try:
             profile = self.profile_model.objects.get(user=user)
             serializer = self.serializer_class(profile)
@@ -29,6 +41,11 @@ class ProfileDetailView(APIView):
 
     def post(self, request):
         user = request.user
+        profile = self.get_profile(user)
+        if profile is None:
+            return Response({"error": f"{self.profile_model.__name__} profile does not exist"},
+                            status=status.HTTP_404_NOT_FOUND)
+
         try:
             profile, created = self.profile_model.objects.get_or_create(user_id=user.id)
             serializer = self.serializer_class(profile, data=request.data, partial=True)
@@ -46,7 +63,23 @@ class ParentProfileDetailView(ProfileDetailView):
     profile_model = ParentProfile
     serializer_class = ParentProfileSerializer
 
+    def get_profile(self, user):
+        profile = super().get_profile(user)
+        if profile is None:
+            return None
+        if profile.user != user:
+            return None
+        return profile
+
 
 class SchoolProfileDetailView(ProfileDetailView):
     profile_model = SchoolProfile
     serializer_class = SchoolProfileSerializer
+
+    def get_profile(self, user):
+        profile = super().get_profile(user)
+        if profile is None:
+            return None
+        if profile.user != user:
+            return None
+        return profile
