@@ -1,17 +1,23 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 from rest_framework import serializers
+
+from authentication.models import CustomUser
+from profiles.models import ParentProfile, SchoolProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = User
-        fields = ('email', 'password')
+        model = CustomUser
+        fields = ('email', 'password', 'role')
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(**validated_data)
+        if user.role == 'parent':
+            ParentProfile.objects.create(user=user)
+        else:
+            SchoolProfile.objects.create(user=user)
         return user
 
 

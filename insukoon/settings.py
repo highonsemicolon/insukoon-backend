@@ -156,3 +156,5 @@ REST_FRAMEWORK = {
 
 # Disable CSRF protection for Django REST Framework API views
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += ['rest_framework.renderers.BrowsableAPIRenderer']
+
+AUTH_USER_MODEL = 'authentication.CustomUser'
