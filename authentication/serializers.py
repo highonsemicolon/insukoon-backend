@@ -1,4 +1,9 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
 
 from authentication.models import CustomUser
@@ -18,6 +23,24 @@ class UserSerializer(serializers.ModelSerializer):
             ParentProfile.objects.create(user=user)
         else:
             SchoolProfile.objects.create(user=user)
+
+        # Generate verification token
+        token_generator = default_token_generator
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = token_generator.make_token(user)
+        # Build verification URL
+        verification_url = reverse('email_verification', kwargs={'uidb64': uid, 'token': token})
+        print(verification_url)
+
+        # Send verification email
+        # send_mail(
+        #     'Verify Your Email',
+        #     f'Click the following link to verify your email: {verification_url}',
+        #     'from@example.com',
+        #     [user.email],
+        #     fail_silently=False,
+        # )
+
         return user
 
 
