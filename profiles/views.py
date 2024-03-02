@@ -2,15 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from authentication.models import CustomUser
 from .models import SchoolProfile, ParentProfile
 from .serializers import ParentProfileSerializer, SchoolProfileSerializer
-
-
-class UserProfileView(APIView):
-
-    def get(self, request):
-        user = request.user
-        return Response({'username': user.username, "user": user.email}, status=status.HTTP_200_OK)
 
 
 class ProfileDetailView(APIView):
@@ -19,6 +13,16 @@ class ProfileDetailView(APIView):
 
     def get_profile(self, user):
         try:
+            custom_user = CustomUser.objects.get(id=user.id)
+            user_type = custom_user.role
+
+            if user_type == 'parent':
+                self.profile_model = ParentProfile
+                self.serializer_class = ParentProfileSerializer
+            else:
+                self.profile_model = SchoolProfile
+                self.serializer_class = SchoolProfileSerializer
+
             return self.profile_model.objects.get(user_id=user.id)
         except self.profile_model.DoesNotExist:
             return None
@@ -45,13 +49,3 @@ class ProfileDetailView(APIView):
             serializer.save()
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ParentProfileDetailView(ProfileDetailView):
-    profile_model = ParentProfile
-    serializer_class = ParentProfileSerializer
-
-
-class SchoolProfileDetailView(ProfileDetailView):
-    profile_model = SchoolProfile
-    serializer_class = SchoolProfileSerializer
