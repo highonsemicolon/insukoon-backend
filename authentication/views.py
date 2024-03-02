@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
-from django.http import HttpResponse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
@@ -10,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import CustomUser as User, CustomUser
+from .models import CustomUser as User
 from .serializers import UserSerializer, TokenSerializer
 
 
@@ -26,6 +25,11 @@ class UserRegistrationAPIView(APIView):
 
             user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)
+
+            referral_code = request.data.get('referral_code')
+            if referral_code:
+                user.referred_by = User.objects.get(referral_code=referral_code)
+                user.save()
 
             return Response({'token': token.key, 'username': username}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -64,8 +68,8 @@ class VerifyEmailView(GenericAPIView):
     def get(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-            user = CustomUser.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
         if user and default_token_generator.check_token(user, token):
@@ -74,3 +78,12 @@ class VerifyEmailView(GenericAPIView):
             return Response({'message': 'Your email has been verified successfully!'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReferralCodeView(APIView):
+
+    def get(self, request):
+        profile = User.objects.get(id=request.user.id)
+        referral_list = User.objects.filter(referred_by=profile)
+        referred_usernames = [user.username for user in referral_list]
+        return Response({'referral_code': profile.referral_code, 'referred_list': referred_usernames}, status=status.HTTP_200_OK)
