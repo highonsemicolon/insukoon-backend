@@ -134,6 +134,7 @@ APPEND_SLASH = False
 AUTH_EXEMPT_PATHS = [
     '/auth/login/',
     '/auth/register/',
+    r'^/auth/verify-email/[\w-]+/[\w-]+/$',
 ]
 
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS

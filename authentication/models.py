@@ -8,3 +8,4 @@ class CustomUser(AbstractUser):
         ('school', 'School'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    email_verified = models.BooleanField(default=False)

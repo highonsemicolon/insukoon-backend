@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.conf import settings
 from rest_framework.authtoken.models import Token
 
+import re
+
 
 class AuthMiddleware:
     def __init__(self, get_response):
@@ -9,7 +11,7 @@ class AuthMiddleware:
 
     def __call__(self, request):
         # Check if the requested path is exempt from authentication
-        if request.path in settings.AUTH_EXEMPT_PATHS:
+        if self.is_exempt_path(request.path):
             return self.get_response(request)
 
         # Check if the user is authenticated via token
@@ -27,4 +29,14 @@ class AuthMiddleware:
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'Unauthorized'}, status=401)
 
+        if not request.user.email_verified:
+            return JsonResponse({'error': 'Email not verified'}, status=403)
+
         return self.get_response(request)
+
+    def is_exempt_path(self, path):
+        # Check if the path matches any of the exempt patterns
+        for pattern in settings.AUTH_EXEMPT_PATHS:
+            if re.match(pattern, path):
+                return True
+        return False
