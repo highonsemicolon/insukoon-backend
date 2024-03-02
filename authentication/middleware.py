@@ -29,6 +29,9 @@ class AuthMiddleware:
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'Unauthorized'}, status=401)
 
+        if not request.user.email_verified:
+            return JsonResponse({'error': 'Email not verified'}, status=403)
+
         return self.get_response(request)
 
     def is_exempt_path(self, path):
