@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
         ('school', 'School'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
-    email_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False)
 
     # Referral
     referral_code = models.CharField(max_length=6, unique=True, default=generate_referral_code, null=True, blank=True)
