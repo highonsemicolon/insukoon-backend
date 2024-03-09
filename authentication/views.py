@@ -37,8 +37,10 @@ class UserRegistrationAPIView(APIView):
                         referrer.save()
                         user.save()
                     else:
+                        user.delete()
                         return Response({'error': 'Maximum referral limit reached'}, status=status.HTTP_400_BAD_REQUEST)
                 except:
+                    user.delete()
                     return Response({'error': 'Invalid referral code'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({'token': token.key, 'username': username}, status=status.HTTP_201_CREATED)
