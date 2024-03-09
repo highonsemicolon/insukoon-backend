@@ -15,7 +15,7 @@ class GenerateReferralCode(APIView):
 class ReferredUsernames(APIView):
     def get(self, request):
         transactions = Transaction.objects.filter(referrer__user_id=request.user)
-        referred_usernames = [txn.referral.referred_user.username for txn in transactions]
+        referred_usernames = [txn.referred_user.username for txn in transactions]
         return Response(referred_usernames, status=status.HTTP_200_OK)
 
 

@@ -34,5 +34,5 @@ class Referrer(models.Model):
 
 class Transaction(models.Model):
     referrer = models.ForeignKey(Referrer, on_delete=models.SET_NULL, null=True, blank=True)
-    Referred_user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    referred_user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
