@@ -2,7 +2,7 @@ import random
 import string
 from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
+from authentication.models import CustomUser as User
 from django.db import models
 from django.conf import settings
 
@@ -16,7 +16,7 @@ def calculate_expiry_date(days):
 
 
 class Referrer(models.Model):
-    user_id = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     referral_code = models.CharField(max_length=6, unique=True, default=generate_referral_code)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
@@ -28,8 +28,11 @@ class Referrer(models.Model):
             self.expiration_date = datetime.now() + timedelta(days=30)
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f'referral code:  {self.referral_code}'
 
-class Referral(models.Model):
+
+class Transaction(models.Model):
     referrer = models.ForeignKey(Referrer, on_delete=models.SET_NULL, null=True, blank=True)
     Referred_user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

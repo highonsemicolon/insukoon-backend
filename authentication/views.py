@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from referrals.models import Referrer, Transaction
 from .models import CustomUser as User
 from .serializers import UserSerializer, TokenSerializer
 
@@ -26,11 +27,19 @@ class UserRegistrationAPIView(APIView):
             user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)
 
-            # Referral refactor needed
-            # referral_code = request.data.get('referral_code')
-            # if referral_code:
-            #     user.referred_by = User.objects.get(referral_code=referral_code)
-            #     user.save()
+            referral_code = request.data.get('referral_code')
+            if referral_code:
+                try:
+                    referrer = Referrer.objects.get(referral_code=referral_code)
+                    if referrer.current_count < referrer.max_limit:
+                        Transaction.objects.create(referrer=referrer, Referred_user=user).save()
+                        referrer.current_count += 1
+                        referrer.save()
+                        user.save()
+                    else:
+                        return Response({'error': 'Maximum referral limit reached'}, status=status.HTTP_400_BAD_REQUEST)
+                except:
+                    return Response({'error': 'Invalid referral code'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({'token': token.key, 'username': username}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

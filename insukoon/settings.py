@@ -136,6 +136,7 @@ AUTH_EXEMPT_PATHS = [
     '/auth/login/',
     '/auth/register/',
     r'^/auth/verify-email/[\w-]+/[\w-]+/$',
+    r'^/refer/verify/[\w-]+/$',
 ]
 
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS

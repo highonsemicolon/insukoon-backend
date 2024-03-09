@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import ReferralListCreateAPIView, ReferralRetrieveUpdateDestroyAPIView
+from .views import GenerateReferralCode, ReferredUsernames, VerifyReferralCode
 
 urlpatterns = [
-    path('', ReferralListCreateAPIView.as_view(), name='referral-list-create'),
-    path('<int:pk>/', ReferralRetrieveUpdateDestroyAPIView.as_view(), name='referral-detail'),
+    path('generate/', GenerateReferralCode.as_view(), name='generate_referral_code'),
+    path('', ReferredUsernames.as_view(), name='referred_usernames'),
+    path('verify/<str:referral_code>/', VerifyReferralCode.as_view(), name='verify_referral_code'),
 ]
