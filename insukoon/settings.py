@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "authentication.apps.AuthenticationConfig",
+    'authentication.apps.AuthenticationConfig',
     'rest_framework.authtoken',
-    "profiles.apps.ProfilesConfig",
+    'profiles.apps.ProfilesConfig',
+    'referrals.apps.ReferralsConfig',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,10 @@ AUTH_EXEMPT_PATHS = [
     '/auth/login/',
     '/auth/register/',
     r'^/auth/verify-email/[\w-]+/[\w-]+/$',
+    r'^/refer/verify/[\w-]+/$',
+
+    '/admin/',
+    '/favicon.ico',
 ]
 
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
