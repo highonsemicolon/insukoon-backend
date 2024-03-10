@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Referrer, Transaction
 
-# Register your models here.
+
+admin.site.register(Referrer)
+admin.site.register(Transaction)

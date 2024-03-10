@@ -137,6 +137,9 @@ AUTH_EXEMPT_PATHS = [
     '/auth/register/',
     r'^/auth/verify-email/[\w-]+/[\w-]+/$',
     r'^/refer/verify/[\w-]+/$',
+
+    '/admin/',
+    '/favicon.ico',
 ]
 
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
