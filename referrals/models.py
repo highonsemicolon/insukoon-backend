@@ -16,12 +16,13 @@ def calculate_expiry_date(days):
 
 
 class Referrer(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     referral_code = models.CharField(max_length=6, unique=True, default=generate_referral_code)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
     max_limit = models.IntegerField(default=3)
     current_count = models.IntegerField(default=0)
+    comment = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
