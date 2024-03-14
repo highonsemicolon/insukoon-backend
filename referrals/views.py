@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from .models import Transaction, Referrer
 
 
-class GenerateReferralCode(APIView):
+class GenerateCode(APIView):
     def get(self, request):
         referrer, _ = Referrer.objects.get_or_create(user_id=request.user)
         referral_code = referrer.referral_code

@@ -31,9 +31,9 @@ class UserRegistrationAPIView(APIView):
             if referral_code:
                 try:
                     referrer = Referrer.objects.get(referral_code=referral_code)
-                    if referrer.current_count < referrer.max_limit:
+                    if referrer.usage_count < referrer.usage_limit:
                         Transaction.objects.create(referrer=referrer, referred_user=user).save()
-                        referrer.current_count += 1
+                        referrer.usage_count += 1
                         referrer.save()
                         user.save()
                     else:
