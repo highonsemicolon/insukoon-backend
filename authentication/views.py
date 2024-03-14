@@ -60,6 +60,12 @@ class UserLoginAPIView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserLogoutAPIView(APIView):
+
+    def get(self, request):
+        request.user.auth_token.delete()
+        return Response({'success': 'Logged out successfully'}, status=status.HTTP_200_OK)
+
 # Requires test again - as of now tokens are set to expire never
 class TokenRefreshAPIView(APIView):
     permission_classes = [IsAuthenticated]
