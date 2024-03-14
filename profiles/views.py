@@ -37,12 +37,19 @@ class ProfileDetailView(APIView):
         serializer = self.serializer_class(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def put(self, request):
         user = request.user
         profile = self.get_profile(user)
         if profile is None or profile.user != user:
             return Response({"error": f"{self.profile_model.__name__} profile does not exist"},
                             status=status.HTTP_404_NOT_FOUND)
+
+        new_username = request.data.get('username', None)
+
+        # Update username if provided
+        if new_username is not None:
+            user.username = new_username
+            user.save()
 
         serializer = self.serializer_class(profile, data=request.data, partial=True)
         if serializer.is_valid():
