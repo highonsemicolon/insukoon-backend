@@ -48,8 +48,12 @@ class ProfileDetailView(APIView):
 
         # Update username if provided
         if new_username is not None:
-            user.username = new_username
-            user.save()
+            if new_username != user.username:
+                if CustomUser.objects.filter(username=new_username).exists():
+                    return Response({"error": f"{new_username} already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+                user.username = new_username
+                user.save()
 
         serializer = self.serializer_class(profile, data=request.data, partial=True)
         if serializer.is_valid():
