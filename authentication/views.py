@@ -35,14 +35,7 @@ class UserRegistrationAPIView(APIView):
             if referral_code:
                 try:
                     referrer = Referrer.objects.get(code=referral_code)
-                    if referrer.usage_count < referrer.usage_limit:
-                        Transaction.objects.create(referrer=referrer, referred_user=user).save()
-                        referrer.usage_count += 1
-                        referrer.save()
-                        user.save()
-                    else:
-                        user.delete()
-                        return Response({'error': 'Maximum referral limit reached'}, status=status.HTTP_400_BAD_REQUEST)
+                    Transaction.objects.create(referrer=referrer, referred_user=user)
                 except:
                     user.delete()
                     return Response({'error': 'Invalid referral code'}, status=status.HTTP_400_BAD_REQUEST)

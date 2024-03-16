@@ -38,3 +38,12 @@ class Transaction(models.Model):
     referrer = models.ForeignKey(Referrer, on_delete=models.SET_NULL, null=True, blank=True)
     referred_user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.referrer.usage_count < self.referrer.usage_limit:
+            self.referrer.usage_count += 1
+            self.referrer.save()
+            super().save(*args, **kwargs)
+
+        else:
+            raise OverflowError('Maximum usage limit reached')

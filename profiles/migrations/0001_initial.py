@@ -48,7 +48,8 @@ class Migration(migrations.Migration):
                 ('grade_6_8_teachers', models.PositiveIntegerField(default=0)),
                 ('grade_9_12_teachers', models.PositiveIntegerField(default=0)),
                 (
-                'user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                    'user',
+                    models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -75,7 +76,8 @@ class Migration(migrations.Migration):
                 ('mobile_number_verification', models.BooleanField(default=False)),
                 ('email_verification', models.BooleanField(default=False)),
                 (
-                'user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                    'user',
+                    models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
