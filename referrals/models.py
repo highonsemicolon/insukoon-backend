@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 
 from authentication.models import CustomUser as User
 
@@ -41,10 +42,12 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if self.referrer.usage_count < self.referrer.usage_limit:
-            self.referrer.usage_count += 1
-            self.referrer.save()
-            super().save(*args, **kwargs)
-
+        if self.referrer and self.referrer.expiration_date > timezone.now():
+            if self.referrer.usage_count < self.referrer.usage_limit:
+                self.referrer.usage_count += 1
+                self.referrer.save()
+                super().save(*args, **kwargs)
+            else:
+                raise ValidationError('Maximum usage limit reached')
         else:
-            raise OverflowError('Maximum usage limit reached')
+            raise ValidationError('Referrer code has expired or does not exist')

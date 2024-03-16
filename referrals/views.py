@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -25,7 +26,9 @@ class VerifyReferralCode(APIView):
 
     def get(self, request, referral_code):
         try:
-            Referrer.objects.get(code=referral_code)
-            return Response({"exists": True}, status=status.HTTP_200_OK)
+            ref = Referrer.objects.get(code=referral_code)
+            if ref.expiration_date > timezone.now() and ref.usage_count < ref.usage_limit:
+                return Response({"exists": True}, status=status.HTTP_200_OK)
+            return Response({"exists": False}, status=status.HTTP_417_EXPECTATION_FAILED)
         except Referrer.DoesNotExist:
             return Response({"exists": False}, status=status.HTTP_404_NOT_FOUND)
