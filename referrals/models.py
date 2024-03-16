@@ -1,9 +1,10 @@
 import random
 import string
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from authentication.models import CustomUser as User
 
@@ -13,7 +14,7 @@ def generate_code():
 
 
 def calculate_expiry_date(days):
-    return datetime.now() + timedelta(days=days)
+    return timezone.now() + timedelta(days=days)
 
 
 class Referrer(models.Model):
@@ -27,7 +28,7 @@ class Referrer(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.expiration_date = datetime.now() + timedelta(days=30) - timedelta(seconds=1)
+            self.expiration_date = timezone.now() + timedelta(days=30) - timedelta(seconds=1)
         super().save(*args, **kwargs)
 
     def __str__(self):
