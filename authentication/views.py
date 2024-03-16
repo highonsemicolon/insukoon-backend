@@ -20,8 +20,12 @@ class UserRegistrationAPIView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
+            count = 1
+            last_user = User.objects.last()
+            if last_user:
+                count = User.objects.last().id + 1
+
             role = request.data.get('role')
-            count = User.objects.filter(username__startswith=f'insukoon_{role}_').count() + 1
             username = f"insukoon_{role}_{count}"
 
             user = serializer.save(username=username)
