@@ -11,7 +11,10 @@ from authentication.models import CustomUser as User
 
 
 def generate_code():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    while True:
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        if not Referrer.objects.filter(code=code).exists():
+            return code
 
 
 def calculate_expiry_date(days):
