@@ -17,7 +17,7 @@ from .serializers import UserSerializer, TokenSerializer
 class UserRegistrationAPIView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
+    def put(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             count = 1
@@ -54,7 +54,7 @@ class UserRegistrationAPIView(APIView):
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
+    def put(self, request):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = authenticate(**serializer.validated_data)
@@ -75,7 +75,7 @@ class UserLogoutAPIView(APIView):
 class TokenRefreshAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def put(self, request):
         try:
             token = Token.objects.get(user=request.user)
             token.delete()
