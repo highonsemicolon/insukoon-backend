@@ -8,8 +8,8 @@ from .models import Transaction, Referrer
 
 class GenerateCode(APIView):
     def get(self, request):
-        referrer, _ = Referrer.objects.get_or_create(user_id=request.user)
-        referral_code = referrer.referral_code
+        referrer, _ = Referrer.objects.get_or_create(user_id=request.user.id)
+        referral_code = referrer.code
         return Response({'referral_code': referral_code}, status=status.HTTP_200_OK)
 
 
@@ -25,7 +25,7 @@ class VerifyReferralCode(APIView):
 
     def get(self, request, referral_code):
         try:
-            Referrer.objects.get(referral_code=referral_code)
+            Referrer.objects.get(code=referral_code)
             return Response({"exists": True}, status=status.HTTP_200_OK)
         except Referrer.DoesNotExist:
             return Response({"exists": False}, status=status.HTTP_404_NOT_FOUND)
