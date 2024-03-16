@@ -1,8 +1,8 @@
-from django.http import JsonResponse
-from django.conf import settings
-from rest_framework.authtoken.models import Token
-
 import re
+
+from django.conf import settings
+from django.http import JsonResponse
+from rest_framework.authtoken.models import Token
 
 
 class AuthMiddleware:

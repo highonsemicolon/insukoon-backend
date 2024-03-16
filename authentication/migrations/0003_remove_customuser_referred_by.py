@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('authentication', '0002_rename_email_verified_customuser_is_email_verified'),
     ]

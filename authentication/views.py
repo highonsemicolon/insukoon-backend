@@ -70,6 +70,7 @@ class UserLogoutAPIView(APIView):
         request.user.auth_token.delete()
         return Response({'success': 'Logged out successfully'}, status=status.HTTP_200_OK)
 
+
 # Requires test again - as of now tokens are set to expire never
 class TokenRefreshAPIView(APIView):
     permission_classes = [IsAuthenticated]

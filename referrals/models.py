@@ -2,9 +2,10 @@ import random
 import string
 from datetime import datetime, timedelta
 
-from authentication.models import CustomUser as User
-from django.db import models
 from django.conf import settings
+from django.db import models
+
+from authentication.models import CustomUser as User
 
 
 def generate_code():
