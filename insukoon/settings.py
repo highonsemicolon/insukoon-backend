@@ -40,10 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authentication.apps.AuthenticationConfig',
     'rest_framework.authtoken',
+
+    # Custom apps
+    'authentication.apps.AuthenticationConfig',
     'profiles.apps.ProfilesConfig',
     'referrals.apps.ReferralsConfig',
+    'payments.apps.PaymentsConfig',
 ]
 
 MIDDLEWARE = [
