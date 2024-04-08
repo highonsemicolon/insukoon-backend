@@ -29,4 +29,10 @@ class CreateBillView(APIView):
 
 
 class SubscriptionStatusView(APIView):
-    pass
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            has_subscription = Payment.objects.filter(user=user).exists()
+            return Response({"has_subscription": has_subscription})
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
