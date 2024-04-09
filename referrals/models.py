@@ -17,10 +17,6 @@ def generate_code():
             return code
 
 
-def calculate_expiry_date(days):
-    return timezone.now() + timedelta(days=days)
-
-
 class Referrer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     code = models.CharField(max_length=6, unique=True, default=generate_code)
