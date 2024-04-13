@@ -2,3 +2,5 @@ Django>=4.2.10
 djangorestframework>=3.14.0
 django-dotenv>=1.4.2
 psycopg2-binary>=2.9.9
+pycryptodome>=3.20.0
+django-cors-headers>=4.3.1
