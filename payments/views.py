@@ -14,8 +14,8 @@ from .utils import encrypt
 merchant_id = os.environ.get('MERCHANT_ID')
 access_code = os.getenv('ACCESS_CODE')
 encryption_key = os.getenv('ENCRYPTION_KEY')
-redirect_url = os.getenv('REDIRECT_URL')
-cancel_url = os.getenv('CANCEL_URL')
+redirect_url = os.getenv('PAYMENT_REDIRECT_URL')
+cancel_url = os.getenv('PAYMENT_CANCEL_URL')
 payment_gtw_url = os.getenv('PAYMENT_GTW_URL')
 
 
