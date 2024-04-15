@@ -141,10 +141,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
 
 AUTH_EXEMPT_PATHS = [
-    '/auth/login/',
-    '/auth/register/',
-    r'^/auth/verify-email/[\w-]+/[\w-]+/$',
-    r'^/refer/verify/[\w-]+/$',
+    '/api/auth/login/',
+    '/api/auth/register/',
+    r'^/api/auth/verify-email/[\w-]+/[\w-]+/$',
+    r'^/api/refer/verify/[\w-]+/$',
 
     '/admin/',
     '/favicon.ico',
