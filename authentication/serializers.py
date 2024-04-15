@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -29,16 +31,18 @@ class UserSerializer(serializers.ModelSerializer):
         token = token_generator.make_token(user)
         # Build verification URL
         verification_url = reverse('email_verification', kwargs={'uidb64': uid, 'token': token})
-        print(verification_url)
 
         # Send verification email
-        # send_mail(
-        #     'Verify Your Email',
-        #     f'Click the following link to verify your email: {verification_url}',
-        #     'from@example.com',
-        #     [user.email],
-        #     fail_silently=False,
-        # )
+        subject = 'Insukoon - Email Verification'
+        message = (f'Hi {user.username}, thank you for registering with Insukoon. Click the following link to verify '
+                   f'your email: {settings.HOST}{verification_url}')
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [user.email, ]
+        try:
+            send_mail(subject, message, email_from, recipient_list)
+        except Exception as e:
+            print(e)
+            print(message)
 
         return user
 
