@@ -7,7 +7,13 @@ class CustomUser(AbstractUser):
         ('parent', 'Parent'),
         ('school', 'School'),
     )
+    COUNTRY_CHOICES = [
+        ('IN', 'India'),
+        ('US', 'United States'),
+    ]
+
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    country = models.CharField(max_length=10, choices=COUNTRY_CHOICES, blank=False, null=False)
     is_email_verified = models.BooleanField(default=False)
 
     def __str__(self):

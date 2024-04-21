@@ -35,7 +35,7 @@ class Referrer(models.Model):
         return f'referral code:  {self.code}'
 
 
-class Transaction(models.Model):
+class Referral(models.Model):
     referrer = models.ForeignKey(Referrer, on_delete=models.SET_NULL, null=True, blank=True)
     referred_user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

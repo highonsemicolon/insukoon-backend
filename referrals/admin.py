@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Referrer, Transaction
+from .models import Referrer, Referral
 
 admin.site.register(Referrer)
-admin.site.register(Transaction)
+admin.site.register(Referral)

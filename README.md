@@ -2,10 +2,15 @@ Create an `.env` file at the project root with the following credentials:
 
 Database used: postgres
 
+```bash
+sudo apt update
+sudo apt install python3-pip python3-dev nginx python3-virtualenv
+```
+
 nginx setup:
 
 Put SSL here:
-```jsonpath
+```
 ssl_certificate: /etc/ssl/certs/insukoon.crt;
 ssl_certificate_key: /etc/ssl/private/insukoon.key;
 ```
@@ -13,7 +18,6 @@ ssl_certificate_key: /etc/ssl/private/insukoon.key;
 Dev Environment:
 ```bash
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/insukoon.key -out /etc/ssl/certs/insukoon.crt
-
 ```
 
 ```bash
@@ -27,8 +31,8 @@ pip install -r requirements.txt
 
 ```bash
 python manage.py makemigrations
-
 python manage.py migrate
+python manage.py populate_prices
 ```
 
 ```bash

@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Transaction, Referrer
+from .models import Referral, Referrer
 
 
 class GenerateCode(APIView):
@@ -16,7 +16,7 @@ class GenerateCode(APIView):
 
 class ReferredUsernames(APIView):
     def get(self, request):
-        transactions = Transaction.objects.filter(referrer__user_id=request.user)
+        transactions = Referral.objects.filter(referrer__user_id=request.user)
         referred_usernames = [txn.referred_user.username for txn in transactions]
         return Response(referred_usernames, status=status.HTTP_200_OK)
 
