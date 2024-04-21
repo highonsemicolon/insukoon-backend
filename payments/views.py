@@ -1,15 +1,14 @@
 import os
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
-from referrals.models import Transaction
-from .models import Payment
+from referrals.models import Referral
+from .models import Transaction, Pricing
 from .utils import encrypt
-
 
 merchant_id = os.environ.get('MERCHANT_ID')
 access_code = os.getenv('ACCESS_CODE')
@@ -22,30 +21,22 @@ payment_gtw_url = os.getenv('PAYMENT_GTW_URL')
 class CreateBillView(APIView):
     def put(self, request):
         try:
-            amount = 0
-            currency = 'INR'
-            user_id = request.user.id
-            profile_type = request.user.role
+            plan = request.data['plan']
+            country = request.user.country
+            role = request.user.role.capitalize()
+            amount, currency = calculate_total_price(role, country, plan, request.user.id)
 
-            if profile_type == 'parent':
-                amount = Decimal('10')
-            elif profile_type == 'school':
-                amount = Decimal('100')
-
-            referral = Transaction.objects.filter(referred_user=user_id)
-            if referral.exists():
-                amount = round(amount * Decimal(0.95), 2)
-
-            payment = Payment.objects.create(user_id=user_id, currency=currency, amount=amount,
-                                             payment_intent_id='temp', status='pending')
+            txn = Transaction.objects.create(user_id=request.user.id, currency=currency, amount=amount,
+                                             status='pending')
 
             p_merchant_id = str(merchant_id)
-            p_order_id = str(payment.id)
+            p_order_id = str(txn.id)
             p_currency = currency
             p_amount = str(amount)
             p_redirect_url = redirect_url
             p_cancel_url = cancel_url
             p_language = 'EN'
+            p_customer_identifier = str(request.user.id)
 
             p_billing_name = ''
             p_billing_address = ''
@@ -69,8 +60,6 @@ class CreateBillView(APIView):
             p_merchant_param4 = ''
             p_merchant_param5 = ''
             p_promo_code = ''
-
-            p_customer_identifier = str(user_id)
 
             merchant_data = (
                     'merchant_id=' + p_merchant_id + '&' + 'order_id=' + p_order_id + '&' + "currency=" + p_currency +
@@ -119,7 +108,44 @@ class SubscriptionStatusView(APIView):
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
-            has_subscription = Payment.objects.filter(user=user).exists()
+            has_subscription = Transaction.objects.filter(user=user).exists()
             return Response({"has_subscription": has_subscription})
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
+
+
+class ProvisionalPaymentView(APIView):
+    def get(self, request):
+        plan = request.data['plan']
+        country = request.user.country
+        role = request.user.role.capitalize()
+        amount, currency = calculate_total_price(role, country, plan, request.user.id)
+        return Response({'amount': amount, 'currency': currency}, status=200)
+
+
+def calculate_total_price(role, country, plan, user_id=None):
+    try:
+        try:
+            pricing = Pricing.objects.get(role=role, plan=plan, country=country)
+        except Pricing.DoesNotExist:
+            # Handle case when pricing is not found
+            raise ValueError(f"Pricing not found for the role: {role}, country: {country} and plan: {plan}.")
+
+        amount = Decimal(pricing.price)
+        currency = pricing.currency
+
+        if user_id:
+            try:
+                _ = Referral.objects.get(referred_user=user_id)
+                # Apply discount if referral exists
+                amount *= Decimal('0.975')
+                # Round the amount to 2 decimal places
+                amount = amount.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+            except Referral.DoesNotExist:
+                pass  # No referral found, no discount applied
+
+        return amount, currency
+    except Exception as e:
+        # Log or handle the error appropriately
+        print(f"An error occurred: {e}")
+        return None, None
