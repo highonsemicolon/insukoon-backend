@@ -1,10 +1,17 @@
-.git
-.gitignore
+*/.git
+*/.gitignore
 
-.dockerignore
-Dockerfile
-docker-compose.yml
-
+config
 postman
 
+README.md
+dockerfile
+env.example
+
 .idea
+__pycache__
+.env
+*.pyc
+*.pyo
+*.pyd
+*/.DS_Store
