@@ -1,3 +1,4 @@
+import math
 import random
 import string
 from datetime import timedelta
@@ -22,13 +23,13 @@ class Referrer(models.Model):
     code = models.CharField(max_length=6, unique=True, default=generate_code)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
-    usage_limit = models.IntegerField(default=3)
+    usage_limit = models.IntegerField(default=100000)
     usage_count = models.IntegerField(default=0)
     comment = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.expiration_date = timezone.now() + timedelta(days=30) - timedelta(seconds=1)
+            self.expiration_date = timezone.now() + timedelta(days=3650) - timedelta(seconds=1)
         super().save(*args, **kwargs)
 
     def __str__(self):
