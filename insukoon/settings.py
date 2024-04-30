@@ -12,13 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-import dotenv
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv_file = os.path.join(BASE_DIR, '.env')
-dotenv.read_dotenv(dotenv_file)
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -173,7 +172,9 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += ['rest_framework.renderers.Browsab
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:63342',
+    'http://localhost:5173',
+    'https://www.insukoon.com',
+    'http://localhost:63342'
     # Add other allowed origins as needed
 ]
 
