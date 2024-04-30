@@ -26,6 +26,7 @@ class Referrer(models.Model):
     usage_limit = models.IntegerField(default=100000)
     usage_count = models.IntegerField(default=0)
     comment = models.TextField(null=True, blank=True)
+    reward_points = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -45,6 +46,7 @@ class Referral(models.Model):
         if self.referrer and self.referrer.expiration_date > timezone.now():
             if self.referrer.usage_count < self.referrer.usage_limit:
                 self.referrer.usage_count += 1
+                self.referrer.reward_points += 100
                 self.referrer.save()
                 super().save(*args, **kwargs)
             else:
