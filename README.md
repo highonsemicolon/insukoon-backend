@@ -1,16 +1,13 @@
-Create an `.env` file at the project root with the following credentials:
+Create an `.env` file at the project root like [env.example](./.env.example)
 
 Database used: postgres
 
 ```bash
 sudo apt update
-sudo apt install python3-pip python3-dev nginx python3-virtualenv
+sudo apt-get install certbot python3-certbot-nginx
 ```
 
 ### Local Environment:
-```bash
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/insukoon.key -out /etc/ssl/certs/insukoon.crt
-```
 
 ```bash
 virtualenv env
@@ -49,8 +46,13 @@ sudo ln -s /etc/nginx/sites-available/insukoon /etc/nginx/sites-enabled/insukoon
 ```
 
 ```bash
+sudo nginx -t # test
 sudo systemctl restart nginx
 ```
 
-
-### Handle certbot also
+## Certbot
+```bash
+sudo certbot --nginx -d insukoon.com -d www.insukoon.com
+sudo nginx -t
+sudo systemctl restart nginx
+```
