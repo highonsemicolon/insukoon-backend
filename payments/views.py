@@ -18,10 +18,24 @@ cancel_url = os.getenv('PAYMENT_CANCEL_URL')
 payment_gtw_url = os.getenv('PAYMENT_GTW_URL')
 
 
+def extract_plan_from_request(request):
+    try:
+        plan = request.data['plan']
+    except KeyError:
+        return None, Response({'error': 'Plan is missing'}, status=400)
+
+    if not plan:
+        return None, Response({'error': 'Plan cannot be empty'}, status=400)
+
+    return plan, None
+
+
 class CreateBillView(APIView):
     def put(self, request):
         try:
-            plan = request.data['plan']
+            plan, error_response = extract_plan_from_request(request)
+            if error_response:
+                return error_response
             country = request.user.country
             role = request.user.role.capitalize()
             amount, currency = calculate_total_price(role, country, plan, request.user.id)
@@ -116,7 +130,10 @@ class SubscriptionStatusView(APIView):
 
 class ProvisionalPaymentView(APIView):
     def get(self, request):
-        plan = request.data['plan']
+        plan, error_response = extract_plan_from_request(request)
+        if error_response:
+            return error_response
+
         country = request.user.country
         role = request.user.role.capitalize()
         amount, currency = calculate_total_price(role, country, plan, request.user.id)
