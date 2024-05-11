@@ -62,7 +62,7 @@ class SchoolProfile(models.Model):
     poc_email = models.EmailField()
 
     # Student details
-    total_students = models.PositiveIntegerField(default=0)
+    total_students = models.PositiveIntegerField(default=1)
     avg_class_size = models.PositiveIntegerField(default=0)
     kg_students = models.PositiveIntegerField(default=0)
     grade_1_5_students = models.PositiveIntegerField(default=0)
