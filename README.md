@@ -1,4 +1,4 @@
-Create an `.env` file at the project root like [env.example](./.env.example)
+Create an `.env` file at the project root like [`env.example`](`./env.example`)
 
 Database used: postgres
 
