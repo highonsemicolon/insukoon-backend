@@ -12,15 +12,20 @@ class Command(BaseCommand):
         Pricing.objects.all().delete()
 
         prices = [
-            {'role': 'Parent', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1500},
-            {'role': 'Parent', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 5000},
-            {'role': 'Parent', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 150},
-            {'role': 'Parent', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 480},
+            {'role': 'parent', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1500},
+            {'role': 'parent', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 5000},
+            {'role': 'parent', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 150},
+            {'role': 'parent', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 480},
+            {'role': 'school', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1400},
+            {'role': 'school', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 4900},
+            {'role': 'school', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 140},
+            {'role': 'school', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 460},
         ]
 
         # Populate the PricingTable model
         for price_data in prices:
             Pricing.objects.create(
+                role=price_data['role'],
                 plan=price_data['plan'],
                 price=price_data['price'],
                 currency=price_data['currency'],
