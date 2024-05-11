@@ -13,8 +13,7 @@ class ProfileDetailView(APIView):
 
     def get_profile(self, user):
         try:
-            custom_user = CustomUser.objects.get(id=user.id)
-            user_type = custom_user.role
+            user_type = user.role
 
             if user_type == 'parent':
                 self.profile_model = ParentProfile
