@@ -1,12 +1,11 @@
 import os
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
-from referrals.models import Referral
 from .models import Transaction, Pricing
 from .utils import encrypt
 
@@ -38,7 +37,7 @@ class CreateBillView(APIView):
                 return error_response
             country = request.user.country
             role = request.user.role.capitalize()
-            amount, currency = calculate_total_price(role, country, plan, request.user.id)
+            amount, currency = calculate_total_price(role, country, plan)
 
             txn = Transaction.objects.create(user_id=request.user.id, currency=currency, amount=amount,
                                              status='pending')
@@ -136,11 +135,11 @@ class ProvisionalPaymentView(APIView):
 
         country = request.user.country
         role = request.user.role.capitalize()
-        amount, currency = calculate_total_price(role, country, plan, request.user.id)
+        amount, currency = calculate_total_price(role, country, plan)
         return Response({'amount': amount, 'currency': currency}, status=200)
 
 
-def calculate_total_price(role, country, plan, user_id=None):
+def calculate_total_price(role, country, plan):
     try:
         try:
             pricing = Pricing.objects.get(role=role, plan=plan, country=country)
@@ -150,16 +149,6 @@ def calculate_total_price(role, country, plan, user_id=None):
 
         amount = Decimal(pricing.price)
         currency = pricing.currency
-
-        if user_id:
-            try:
-                _ = Referral.objects.get(referred_user=user_id)
-                # Apply discount if referral exists
-                amount *= Decimal('0.975')
-                # Round the amount to 2 decimal places
-                amount = amount.quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-            except Referral.DoesNotExist:
-                pass  # No referral found, no discount applied
 
         return amount, currency
     except Exception as e:
