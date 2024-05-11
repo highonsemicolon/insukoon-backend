@@ -34,7 +34,7 @@ class ParentProfile(models.Model):
     email_verification = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Parent Profile: {self.user.username}"
+        return f"Parent Profile: {self.user}"
 
 
 class SchoolProfile(models.Model):
