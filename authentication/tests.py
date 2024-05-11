@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 
 class AuthenticationTests(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='password123')
+        self.user = settings.AUTH_USER_MODEL.objects.create_user(username='testuser', password='password123')
 
     def test_registration(self):
         data = {'username': 'newuser', 'password': 'newpassword', 'email': 'newuser@example.com'}
