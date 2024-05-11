@@ -1,6 +1,5 @@
+from django.conf import settings
 from django.db import models
-
-from authentication.models import CustomUser as User
 
 CURRENCY_CHOICES = [
     ('INR', 'Indian Rupees'),
@@ -8,17 +7,25 @@ CURRENCY_CHOICES = [
 ]
 
 
-class Transaction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.IntegerField(default=1)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=8, choices=CURRENCY_CHOICES, default='INR')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Transaction(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
     status = models.CharField(max_length=20,
                               choices=[('pending', 'Pending'), ('success', 'Success'), ('failed', 'Failed')])
     created_at = models.DateTimeField(auto_now_add=True)
     payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f'Billing information for {self.user.username}'
+        return f'Billing information for {self.user}'
 
 
 class Pricing(models.Model):

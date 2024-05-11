@@ -2,11 +2,13 @@ import os
 from decimal import Decimal
 
 from django.http import HttpResponse
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
-from .models import Transaction, Pricing
+from profiles.models import SchoolProfile
+from .models import Transaction, Pricing, Order
 from .utils import encrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -32,15 +34,19 @@ def extract_plan_from_request(request):
 class CreateBillView(APIView):
     def put(self, request):
         try:
-            plan, error_response = extract_plan_from_request(request)
-            if error_response:
-                return error_response
-            country = request.user.country
-            role = request.user.role.capitalize()
-            amount, currency = calculate_total_price(role, country, plan)
+            try:
+                order_id = request.data['order_id']
+                order = Order.objects.get(id=order_id)
+            except Order.DoesNotExist as e:
+                return Response({'error': str(e)}, status=status.HTTP_417_EXPECTATION_FAILED)
+            if order is None or order.user != request.user:
+                return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            txn = Transaction.objects.create(user_id=request.user.id, currency=currency, amount=amount,
-                                             status='pending')
+            price = order.amount
+            currency = order.currency
+            amount = price * order.quantity
+
+            txn = Transaction.objects.create(order=order, status='pending')
 
             p_merchant_id = str(merchant_id)
             p_order_id = str(txn.id)
@@ -128,19 +134,33 @@ class SubscriptionStatusView(APIView):
 
 
 class ProvisionalPaymentView(APIView):
-    def get(self, request):
+    def put(self, request):
         plan, error_response = extract_plan_from_request(request)
         if error_response:
             return error_response
 
-        country = request.user.country
-        role = request.user.role.capitalize()
-        amount, currency = calculate_total_price(role, country, plan)
+        user = request.user
+        country = user.country
+        role = user.role.lower()
 
-        return Response({'amount': amount, 'currency': currency}, status=200)
+        quantity = 1
+        if user.role == 'school':
+            quantity = SchoolProfile.objects.filter(user=user).last().total_students
+
+        price, currency = calculate_price(role, country, plan)
+
+        try:
+            amount = price * quantity
+        except:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        order = Order.objects.create(user=user, amount=amount, price=price, quantity=quantity, currency=currency)
+        return Response(
+            {'order_id': order.id, 'total_amount': order.amount, 'currency': order.currency, 'quantity': order.quantity,
+             'price': order.price}, status=200)
 
 
-def calculate_total_price(role, country, plan, bucket_size=1):
+def calculate_price(role, country, plan):
     try:
         try:
             pricing = Pricing.objects.get(role=role, plan=plan, country=country)
@@ -148,13 +168,10 @@ def calculate_total_price(role, country, plan, bucket_size=1):
             # Handle case when pricing is not found
             raise ValueError(f"Pricing not found for the role: {role}, country: {country} and plan: {plan}.")
 
-        amount = Decimal(pricing.price)
+        price = Decimal(pricing.price)
         currency = pricing.currency
 
-        if role == 'School':
-            amount = amount*bucket_size
-
-        return amount, currency
+        return price, currency
     except Exception as e:
         # Log or handle the error appropriately
         print(f"An error occurred: {e}")
