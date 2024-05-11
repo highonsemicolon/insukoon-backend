@@ -25,10 +25,9 @@ load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-allowed_hosts_env = os.environ.get('ALLOWED_HOSTS')
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
 
 ALLOWED_HOSTS = allowed_hosts_env.split(',') if allowed_hosts_env else []
 
