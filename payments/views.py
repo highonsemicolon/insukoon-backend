@@ -136,10 +136,11 @@ class ProvisionalPaymentView(APIView):
         country = request.user.country
         role = request.user.role.capitalize()
         amount, currency = calculate_total_price(role, country, plan)
+
         return Response({'amount': amount, 'currency': currency}, status=200)
 
 
-def calculate_total_price(role, country, plan):
+def calculate_total_price(role, country, plan, bucket_size=1):
     try:
         try:
             pricing = Pricing.objects.get(role=role, plan=plan, country=country)
@@ -149,6 +150,9 @@ def calculate_total_price(role, country, plan):
 
         amount = Decimal(pricing.price)
         currency = pricing.currency
+
+        if role == 'School':
+            amount = amount*bucket_size
 
         return amount, currency
     except Exception as e:
