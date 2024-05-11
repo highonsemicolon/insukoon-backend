@@ -42,7 +42,6 @@ class UserSerializer(serializers.ModelSerializer):
             send_mail(subject, message, email_from, recipient_list)
         except Exception as e:
             print(e)
-            print(message)
 
         return user
 
