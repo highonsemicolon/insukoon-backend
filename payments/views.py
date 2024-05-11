@@ -35,7 +35,9 @@ class CreateBillView(APIView):
     def put(self, request):
         try:
             try:
-                order_id = request.data['order_id']
+                order_id = request.data.pop('order_id', None)
+                if order_id is None:
+                    return Response({'error': 'order_id is missing'}, status=status.HTTP_404_NOT_FOUND)
                 order = Order.objects.get(id=order_id)
             except Order.DoesNotExist as e:
                 return Response({'error': str(e)}, status=status.HTTP_417_EXPECTATION_FAILED)
@@ -57,14 +59,14 @@ class CreateBillView(APIView):
             p_language = 'EN'
             p_customer_identifier = str(request.user.id)
 
-            p_billing_name = ''
+            p_billing_name = request.user.username
             p_billing_address = ''
             p_billing_city = ''
             p_billing_state = ''
             p_billing_zip = ''
             p_billing_country = ''
             p_billing_tel = ''
-            p_billing_email = ''
+            p_billing_email = request.user.email
 
             p_delivery_name = ''
             p_delivery_address = ''

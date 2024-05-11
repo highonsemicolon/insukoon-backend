@@ -18,7 +18,7 @@ class Order(models.Model):
 
 
 class Transaction(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     status = models.CharField(max_length=20,
                               choices=[('pending', 'Pending'), ('success', 'Success'), ('failed', 'Failed')])
     created_at = models.DateTimeField(auto_now_add=True)
