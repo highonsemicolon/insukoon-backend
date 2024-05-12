@@ -2,6 +2,7 @@ import os
 from decimal import Decimal
 from urllib.parse import parse_qs
 
+from dateutil import parser as date_parser
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -9,12 +10,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dateutil import parser as date_parser
-
 from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
+from referrals.models import Referral, Referrer
 from .models import Order, Pricing, ProvisionalOrder
-from .serializers import PaymentGatewayResponseSerializer
+from .serializers import PaymentGatewayResponseSerializer, ProvisionalPaymentSerializer
 from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -23,18 +23,6 @@ encryption_key = os.getenv('ENCRYPTION_KEY')
 redirect_url = os.getenv('PAYMENT_REDIRECT_URL')
 cancel_url = os.getenv('PAYMENT_CANCEL_URL')
 payment_gtw_url = os.getenv('PAYMENT_GTW_URL')
-
-
-def extract_plan_from_request(request):
-    try:
-        plan = request.data['plan']
-    except KeyError:
-        return None, Response({'error': 'Plan is missing'}, status=400)
-
-    if not plan:
-        return None, Response({'error': 'Plan cannot be empty'}, status=400)
-
-    return plan, None
 
 
 class CreateBillView(APIView):
@@ -143,13 +131,24 @@ class SubscriptionStatusView(APIView):
 
 class ProvisionalPaymentView(APIView):
     def put(self, request):
-        plan, error_response = extract_plan_from_request(request)
-        if error_response:
-            return error_response
+        serializer = ProvisionalPaymentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        plan = serializer.validated_data['plan']
+        referral_code = serializer.validated_data.get('referral_code')
 
         user = request.user
         country = user.country
         role = user.role.lower()
+
+        # Check if referral code exists
+        if referral_code:
+            try:
+                referrer = Referrer.objects.get(code=referral_code)
+                Referral.objects.create(referrer=referrer, referred_user=user)
+            except:
+                return Response({'error': 'Invalid referral code'}, status=status.HTTP_400_BAD_REQUEST)
 
         quantity = 1
         if user.role == 'school':
@@ -159,15 +158,26 @@ class ProvisionalPaymentView(APIView):
 
         try:
             amount = price * quantity
-        except:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_204_NO_CONTENT)
 
-        provisional_order = ProvisionalOrder.objects.create(user=user, amount=amount, price=price, quantity=quantity,
-                                                            currency=currency)
-        return Response(
-            {'order_id': provisional_order.id, 'total_amount': provisional_order.amount,
-             'currency': provisional_order.currency, 'quantity': provisional_order.quantity,
-             'price': provisional_order.price}, status=200)
+        provisional_order = ProvisionalOrder.objects.create(
+            user=user,
+            plan=plan,
+            amount=amount,
+            price=price,
+            quantity=quantity,
+            currency=currency
+        )
+
+        return Response({
+            'order_id': provisional_order.id,
+            'total_amount': provisional_order.amount,
+            'currency': provisional_order.currency,
+            'quantity': provisional_order.quantity,
+            'price': provisional_order.price,
+            'plan': provisional_order.plan,
+        }, status=status.HTTP_200_OK)
 
 
 def calculate_price(role, country, plan):

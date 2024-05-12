@@ -9,7 +9,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from referrals.models import Referrer, Referral
 from .models import CustomUser as User
 from .serializers import UserSerializer, TokenSerializer
 
@@ -30,15 +29,6 @@ class UserRegistrationAPIView(APIView):
 
             user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)
-
-            referral_code = request.data.get('referral_code')
-            if referral_code:
-                try:
-                    referrer = Referrer.objects.get(code=referral_code)
-                    Referral.objects.create(referrer=referrer, referred_user=user)
-                except:
-                    user.delete()
-                    return Response({'error': 'Invalid referral code'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({'token': token.key, 'username': username}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

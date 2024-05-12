@@ -6,10 +6,16 @@ CURRENCY_CHOICES = [
     ('USD', 'US Dollars'),
 ]
 
+PLAN_CHOICES = [
+    ('quarterly', 'Quarterly'),
+    ('yearly', 'Yearly'),
+]
+
 
 class ProvisionalOrder(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    plan = models.CharField(max_length=8, choices=CURRENCY_CHOICES, default='yearly')
     quantity = models.IntegerField(default=1)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=8, choices=CURRENCY_CHOICES, default='INR')
@@ -29,11 +35,6 @@ class Order(models.Model):
 
 
 class Pricing(models.Model):
-    PLAN_CHOICES = [
-        ('quarterly', 'Quarterly'),
-        ('yearly', 'Yearly'),
-    ]
-
     ROLE_CHOICES = (
         ('parent', 'Parent'),
         ('school', 'School'),
@@ -88,5 +89,6 @@ class PaymentGatewayResponse(models.Model):
     trans_date = models.DateTimeField()
     bin_country = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"PaymentGatewayResponse for order {self.order_id}"
