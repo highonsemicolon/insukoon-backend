@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pricing, Order
+from .models import Pricing, ProvisionalOrder
 
 
 class PricingSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class PricingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class ProvisionalOrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Order
+        model = ProvisionalOrder
         fields = '__all__'

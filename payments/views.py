@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
-from .models import Transaction, Pricing, Order
+from .models import Transaction, Pricing, ProvisionalOrder
 from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -40,17 +40,17 @@ class CreateBillView(APIView):
                 order_id = request.data.pop('order_id', None)
                 if order_id is None:
                     return Response({'error': 'order_id is missing'}, status=status.HTTP_404_NOT_FOUND)
-                order = Order.objects.get(id=order_id)
-            except Order.DoesNotExist as e:
+                provisional_order = ProvisionalOrder.objects.get(id=order_id)
+            except ProvisionalOrder.DoesNotExist as e:
                 return Response({'error': str(e)}, status=status.HTTP_417_EXPECTATION_FAILED)
-            if order is None or order.user != request.user:
+            if provisional_order is None or provisional_order.user != request.user:
                 return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            price = order.amount
-            currency = order.currency
-            amount = price * order.quantity
+            price = provisional_order.amount
+            currency = provisional_order.currency
+            amount = price * provisional_order.quantity
 
-            txn = Transaction.objects.create(order=order, status='pending')
+            txn = Transaction.objects.create(order=provisional_order, status='pending')
 
             p_merchant_id = str(merchant_id)
             p_order_id = str(txn.id)
@@ -158,10 +158,12 @@ class ProvisionalPaymentView(APIView):
         except:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        order = Order.objects.create(user=user, amount=amount, price=price, quantity=quantity, currency=currency)
+        provisional_order = ProvisionalOrder.objects.create(user=user, amount=amount, price=price, quantity=quantity,
+                                                            currency=currency)
         return Response(
-            {'order_id': order.id, 'total_amount': order.amount, 'currency': order.currency, 'quantity': order.quantity,
-             'price': order.price}, status=200)
+            {'order_id': provisional_order.id, 'total_amount': provisional_order.amount,
+             'currency': provisional_order.currency, 'quantity': provisional_order.quantity,
+             'price': provisional_order.price}, status=200)
 
 
 def calculate_price(role, country, plan):

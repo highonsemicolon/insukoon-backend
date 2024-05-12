@@ -7,7 +7,7 @@ CURRENCY_CHOICES = [
 ]
 
 
-class Order(models.Model):
+class ProvisionalOrder(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField(default=1)
@@ -18,14 +18,14 @@ class Order(models.Model):
 
 
 class Transaction(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    provisional_order = models.ForeignKey(ProvisionalOrder, on_delete=models.CASCADE)
     status = models.CharField(max_length=20,
                               choices=[('pending', 'Pending'), ('success', 'Success'), ('failed', 'Failed')])
     created_at = models.DateTimeField(auto_now_add=True)
     payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f'Billing information for {self.user}'
+        return f'Billing information for {self.provisional_order}'
 
 
 class Pricing(models.Model):
