@@ -143,6 +143,7 @@ AUTH_EXEMPT_PATHS = [
     r'^/api/auth/verify-email/[\w-]+/[\w-]+/$',
     r'^/api/refer/verify/[\w-]+/$',
     r'^/api/payment/response/',
+    r'^/api/payment/pricing/',
 
     '/admin/',
     '/favicon.ico',

@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from .models import Pricing, ProvisionalOrder, PaymentGatewayResponse
+from .models import Pricing, PaymentGatewayResponse
 
 
 class PricingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pricing
-        fields = '__all__'
+        exclude = ['id']
+        # fields = '__all__'
 
 
 class ProvisionalPaymentSerializer(serializers.Serializer):

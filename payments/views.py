@@ -5,7 +5,7 @@ from urllib.parse import parse_qs
 from dateutil import parser as date_parser
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +14,7 @@ from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
 from referrals.models import Referral, Referrer
 from .models import Order, Pricing, ProvisionalOrder
-from .serializers import PaymentGatewayResponseSerializer, ProvisionalPaymentSerializer
+from .serializers import PaymentGatewayResponseSerializer, ProvisionalPaymentSerializer, PricingSerializer
 from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -23,6 +23,12 @@ encryption_key = os.getenv('ENCRYPTION_KEY')
 redirect_url = os.getenv('PAYMENT_REDIRECT_URL')
 cancel_url = os.getenv('PAYMENT_CANCEL_URL')
 payment_gtw_url = os.getenv('PAYMENT_GTW_URL')
+
+
+class PricingList(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = Pricing.objects.all()
+    serializer_class = PricingSerializer
 
 
 class CreateBillView(APIView):

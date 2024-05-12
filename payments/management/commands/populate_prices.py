@@ -13,13 +13,14 @@ class Command(BaseCommand):
 
         prices = [
             {'role': 'parent', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1500},
-            {'role': 'parent', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 5000},
-            {'role': 'parent', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 150},
-            {'role': 'parent', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 480},
-            {'role': 'school', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1400},
-            {'role': 'school', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 4900},
-            {'role': 'school', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 140},
-            {'role': 'school', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 460},
+            {'role': 'parent', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 4800},
+            {'role': 'school', 'country': 'IN', 'plan': 'quarterly', 'currency': 'INR', 'price': 1500},
+            {'role': 'school', 'country': 'IN', 'plan': 'yearly', 'currency': 'INR', 'price': 4800},
+
+            # {'role': 'parent', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 150},
+            # {'role': 'parent', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 480},
+            # {'role': 'school', 'country': 'US', 'plan': 'quarterly', 'currency': 'USD', 'price': 140},
+            # {'role': 'school', 'country': 'US', 'plan': 'yearly', 'currency': 'USD', 'price': 460},
         ]
 
         # Populate the PricingTable model
