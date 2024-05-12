@@ -118,5 +118,39 @@ class SchoolProfile(models.Model):
     grade_6_8_teachers = models.PositiveIntegerField(default=0)
     grade_9_12_teachers = models.PositiveIntegerField(default=0)
 
+    # Program details
+    PROGRAM_CHOICES = [
+        ('Kindergarten', 'Kindergarten'),
+        ('Primary', 'Primary Schooler (Grade 1-5)'),
+        ('PreTeens', 'Pre-Teens (6-8)'),
+        ('Teens', 'Teens (9-10)')
+    ]
+    program_1_name = models.CharField(max_length=100, choices=PROGRAM_CHOICES, null=True, blank=True)
+    program_1_student_session_day = models.CharField(max_length=100,
+                                                     choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'),
+                                                              ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'),
+                                                              ('Friday', 'Friday')], null=True, blank=True)
+    program_1_student_batch_time = models.CharField(max_length=100, choices=[('During', 'During School Hours'),
+                                                                             ('After', 'After School Hours')],
+                                                    null=True, blank=True)
+
+    program_2_name = models.CharField(max_length=100, choices=[('Gurutva', 'Gurutva (Teacher\'s Program)'),
+                                                               ('Samarpan', 'Samarpan (Staff Program)')], null=True,
+                                      blank=True)
+    program_2_teacher_session_day = models.CharField(max_length=100,
+                                                     choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'),
+                                                              ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'),
+                                                              ('Friday', 'Friday')], null=True, blank=True)
+    program_2_teacher_batch_time = models.CharField(max_length=100, choices=[('During', 'During School Hours'),
+                                                                             ('After', 'After School Hours')],
+                                                    null=True, blank=True)
+    program_2_staff_session_day = models.CharField(max_length=100,
+                                                   choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'),
+                                                            ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'),
+                                                            ('Friday', 'Friday')], null=True, blank=True)
+    program_2_staff_batch_time = models.CharField(max_length=100, choices=[('During', 'During School Hours'),
+                                                                           ('After', 'After School Hours')], null=True,
+                                                  blank=True)
+
     def __str__(self):
         return f"School Profile: {self.name}"
