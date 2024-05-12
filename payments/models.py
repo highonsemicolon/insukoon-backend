@@ -62,7 +62,7 @@ class PaymentGatewayResponse(models.Model):
     currency = models.CharField(max_length=5)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     billing_name = models.CharField(max_length=100)
-    billing_email = models.EmailField()
+    billing_email = models.EmailField(null=True, blank=True)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)
     card_name = models.CharField(max_length=100, null=True, blank=True)
     billing_address = models.TextField(null=True, blank=True)

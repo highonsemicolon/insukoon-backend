@@ -59,7 +59,7 @@ class CreateBillView(APIView):
             p_language = 'EN'
             p_customer_identifier = str(request.user.id)
 
-            p_billing_name = request.user.username
+            p_billing_name = ''
             p_billing_address = ''
             p_billing_city = ''
             p_billing_state = ''
