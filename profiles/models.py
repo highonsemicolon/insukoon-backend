@@ -32,6 +32,47 @@ class ParentProfile(models.Model):
     mobile_number_verification = models.BooleanField(default=False)
     email_verification = models.BooleanField(default=False)
 
+    # Session Details
+    preferred_start_date = models.DateField(auto_now_add=True, null=True, blank=True)
+    batch_day = models.CharField(max_length=20, choices=[
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+    ], default='Monday')
+    batch_time = models.CharField(max_length=20, choices=[
+        ('4:00 PM - 5:00 PM', '4:00 PM - 5:00 PM'),
+        ('5:00 PM - 6:00 PM', '5:00 PM - 6:00 PM'),
+        ('6:00 PM - 7:00 PM', '6:00 PM - 7:00 PM'),
+        ('7:00 PM - 8:00 PM', '7:00 PM - 8:00 PM'),
+        ('8:00 PM - 9:00 PM', '8:00 PM - 9:00 PM'),
+    ], default='4:00 PM - 5:00')
+    preferred_language = models.CharField(max_length=20, choices=[
+        ('English', 'English'),
+        ('Hindi', 'Hindi'),
+        ('Mix of Both', 'Mix of Both'),
+    ], default='Mix of Both')
+
+    areas_to_improve_in_child_1 = models.TextField(blank=True)
+    areas_to_improve_in_child_2 = models.TextField(blank=True)
+    areas_to_improve_in_child_3 = models.TextField(blank=True)
+    areas_to_improve_in_child_4 = models.TextField(blank=True)
+    areas_to_improve_in_child_5 = models.TextField(blank=True)
+
+    areas_to_improve_as_parent_1 = models.TextField(blank=True)
+    areas_to_improve_as_parent_2 = models.TextField(blank=True)
+    areas_to_improve_as_parent_3 = models.TextField(blank=True)
+
+    session_day = models.CharField(max_length=10, choices=[
+        ('Weekday', 'Weekday'),
+        ('Weekend', 'Weekend'),
+    ], default='Weekday')
+    session_time = models.CharField(max_length=20, choices=[
+        ('Before 8 PM', 'Before 8 PM'),
+        ('After 8 PM', 'After 8 PM'),
+    ], default='After 8 PM')
+
     def __str__(self):
         return f"Parent Profile: {self.user}"
 
