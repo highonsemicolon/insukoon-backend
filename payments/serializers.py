@@ -14,14 +14,6 @@ class ProvisionalPaymentSerializer(serializers.Serializer):
     referral_code = serializers.CharField(required=False)
 
 
-class ProvisionalOrderSerializer(serializers.Serializer):
-    order_id = serializers.IntegerField()
-    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    currency = serializers.CharField(max_length=3)
-    quantity = serializers.IntegerField()
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
-
-
 class PaymentGatewayResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentGatewayResponse

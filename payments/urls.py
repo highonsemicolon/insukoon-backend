@@ -6,5 +6,4 @@ urlpatterns = [
     path('create/', CreateBillView.as_view(), name='payment-init'),
     path('response/', PaymentResponseView.as_view(), name='payment-response'),
     path('subscription-status/<int:user_id>/', SubscriptionStatusView.as_view(), name='subscription-status'),
-
 ]
