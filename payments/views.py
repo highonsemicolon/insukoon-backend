@@ -3,14 +3,18 @@ from decimal import Decimal
 from urllib.parse import parse_qs
 
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from dateutil import parser as date_parser
+
 from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
 from .models import Order, Pricing, ProvisionalOrder
+from .serializers import PaymentGatewayResponseSerializer
 from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -193,9 +197,24 @@ class PaymentResponseView(APIView):
             request_data = QueryDict(body_str)
             dec_resp = decrypt(request_data.get('encResp', ''), encryption_key)
             response = parse_qs(dec_resp)
+            data = {k: v[0] for k, v in response.items()}
 
-            parsed_response = {k: v[0] for k, v in response.items()}
-            print(parsed_response)
+            if 'trans_date' in data:
+                try:
+                    data['trans_date'] = date_parser.parse(data['trans_date'])
+                except ValueError:
+                    return Response({'error': 'Invalid trans_date format'}, status=400)
+
+            serializer = PaymentGatewayResponseSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+
+            order_id = int(data.get('order_id', '0'))
+            order = get_object_or_404(Order, id=order_id, status='pending')
+            order.status = data.get('order_status', 'pending')
+            order.save()
 
             return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'), content_type='text/html')
         return Response({'error': 'something went wrong'}, content_type='text/html', status=400)
