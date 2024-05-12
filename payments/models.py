@@ -17,7 +17,7 @@ class ProvisionalOrder(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Transaction(models.Model):
+class Order(models.Model):
     provisional_order = models.ForeignKey(ProvisionalOrder, on_delete=models.CASCADE)
     status = models.CharField(max_length=20,
                               choices=[('pending', 'Pending'), ('success', 'Success'), ('failed', 'Failed')])

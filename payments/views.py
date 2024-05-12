@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
-from .models import Transaction, Pricing, ProvisionalOrder
+from .models import Order, Pricing, ProvisionalOrder
 from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
@@ -50,7 +50,7 @@ class CreateBillView(APIView):
             currency = provisional_order.currency
             amount = price * provisional_order.quantity
 
-            txn = Transaction.objects.create(provisional_order=provisional_order, status='pending')
+            txn = Order.objects.create(provisional_order=provisional_order, status='pending')
 
             p_merchant_id = str(merchant_id)
             p_order_id = str(txn.id)
@@ -131,7 +131,7 @@ class SubscriptionStatusView(APIView):
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
-            has_subscription = Transaction.objects.filter(user=user).exists()
+            has_subscription = Order.objects.filter(user=user).exists()
             return Response({"has_subscription": has_subscription})
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
