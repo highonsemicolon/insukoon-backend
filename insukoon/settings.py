@@ -142,6 +142,7 @@ AUTH_EXEMPT_PATHS = [
     '/api/auth/register/',
     r'^/api/auth/verify-email/[\w-]+/[\w-]+/$',
     r'^/api/refer/verify/[\w-]+/$',
+    r'^/api/payment/response/',
 
     '/admin/',
     '/favicon.ico',
@@ -173,7 +174,7 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://www.insukoon.com',
-    'http://localhost:63342'
+    'http://localhost:63342',
     # Add other allowed origins as needed
 ]
 

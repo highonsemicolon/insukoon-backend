@@ -1,15 +1,17 @@
 import os
 from decimal import Decimal
+from urllib.parse import parse_qs
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.models import CustomUser as User
 from profiles.models import SchoolProfile
 from .models import Transaction, Pricing, Order
-from .utils import encrypt
+from .utils import encrypt, decrypt
 
 merchant_id = os.environ.get('MERCHANT_ID')
 access_code = os.getenv('ACCESS_CODE')
@@ -178,3 +180,20 @@ def calculate_price(role, country, plan):
         # Log or handle the error appropriately
         print(f"An error occurred: {e}")
         return None, None
+
+
+class PaymentResponseView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if 'text/html' in request.META.get('HTTP_ACCEPT', ''):
+            body_str = request.body.decode('utf-8')
+            request_data = QueryDict(body_str)
+            dec_resp = decrypt(request_data.get('encResp', ''), encryption_key)
+            response = parse_qs(dec_resp)
+
+            parsed_response = {k: v[0] for k, v in response.items()}
+            print(parsed_response)
+
+            return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'), content_type='text/html')
+        return Response({'error': 'something went wrong'}, content_type='text/html', status=400)
