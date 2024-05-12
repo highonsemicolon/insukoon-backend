@@ -50,7 +50,7 @@ class CreateBillView(APIView):
             currency = provisional_order.currency
             amount = price * provisional_order.quantity
 
-            txn = Transaction.objects.create(order=provisional_order, status='pending')
+            txn = Transaction.objects.create(provisional_order=provisional_order, status='pending')
 
             p_merchant_id = str(merchant_id)
             p_order_id = str(txn.id)
