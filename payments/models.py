@@ -25,6 +25,7 @@ class ProvisionalOrder(models.Model):
 
 class Order(models.Model):
     provisional_order = models.ForeignKey(ProvisionalOrder, on_delete=models.CASCADE)
+    insukoon_user_id = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=20,
                               choices=[('pending', 'Pending'), ('success', 'Success'), ('failed', 'Failed')])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -61,7 +62,7 @@ class PaymentGatewayResponse(models.Model):
     status_message = models.TextField()
     currency = models.CharField(max_length=5)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
-    billing_name = models.CharField(max_length=100)
+    billing_name = models.CharField(max_length=100, null=True, blank=True)
     billing_email = models.EmailField(null=True, blank=True)
     payment_mode = models.CharField(max_length=50, null=True, blank=True)
     card_name = models.CharField(max_length=100, null=True, blank=True)
