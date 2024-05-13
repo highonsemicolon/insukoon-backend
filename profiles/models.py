@@ -9,10 +9,13 @@ class ParentProfile(models.Model):
     student_first_name = models.CharField(max_length=100)
     student_last_name = models.CharField(max_length=100)
     student_dob = models.DateField(default='2005-11-01')
+    student_email = models.EmailField(blank=True)
     student_gender = models.CharField(max_length=10)
     student_country = models.CharField(max_length=100)
     student_state = models.CharField(max_length=100)
     student_grade = models.CharField(max_length=100)
+    school_name = models.CharField(max_length=100, blank=True)
+    student_phone_number = models.CharField(max_length=100, blank=True)
 
     # Father details
     father_first_name = models.CharField(max_length=100)
@@ -28,9 +31,15 @@ class ParentProfile(models.Model):
     mother_mobile_number = models.CharField(max_length=20)
     mother_occupation = models.CharField(max_length=100)
 
-    # Verification details
-    mobile_number_verification = models.BooleanField(default=False)
-    email_verification = models.BooleanField(default=False)
+    # Best to connect
+    notification_email = models.BooleanField(default=False)
+    notification_phone_number = models.BooleanField(default=False)
+
+    # Address details
+    city = models.CharField(max_length=100, blank=True)
+    area = models.CharField(max_length=100, blank=True)
+    building = models.CharField(max_length=100, blank=True)
+    zip_code = models.CharField(max_length=100, blank=True)
 
     # Session Details
     preferred_start_date = models.DateField(auto_now_add=True, null=True, blank=True)
