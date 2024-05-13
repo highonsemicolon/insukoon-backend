@@ -231,6 +231,10 @@ class PaymentResponseView(APIView):
             order = get_object_or_404(Order, id=order_id, status='pending')
             order.status = data.get('order_status', 'pending')
             order.save()
+            if order.status == 'Success':
+                return HttpResponseRedirect('https://www.insukoon.com/login', content_type='text/html')
+            else:
+                return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'),
+                                            content_type='text/html')
 
-            return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'), content_type='text/html')
         return Response({'error': 'something went wrong'}, content_type='text/html', status=400)
