@@ -19,13 +19,12 @@ class UserRegistrationAPIView(APIView):
     def put(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            count = 1
+            count = 0
             last_user = User.objects.last()
             if last_user:
-                count = User.objects.last().id + 1
+                count = User.objects.last().id
 
-            role = request.data.get('role')
-            username = f"insukoon_{role}_{count}"
+            username = f"INSK_{1001+count}"
 
             user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)
