@@ -32,8 +32,8 @@ class ParentProfile(models.Model):
     mother_occupation = models.CharField(max_length=100)
 
     # Best to connect
-    notification_email = models.BooleanField(default=False)
-    notification_phone_number = models.BooleanField(default=False)
+    notification_email = models.EmailField(blank=True)
+    notification_phone_number = models.CharField(max_length=20, blank=True)
 
     # Address details
     city = models.CharField(max_length=100, blank=True)
