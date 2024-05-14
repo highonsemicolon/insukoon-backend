@@ -223,8 +223,6 @@ class PaymentResponseView(APIView):
             serializer = PaymentGatewayResponseSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-            else:
-                print(serializer.errors)
 
             order_id = int(data.get('order_id', '0'))
             order = get_object_or_404(Order, id=order_id, status='pending')
