@@ -49,7 +49,6 @@ class CreateBillView(APIView):
             amount = price * provisional_order.quantity
 
             txn = Order.objects.create(provisional_order=provisional_order, status='pending', insukoon_user_id=request.user.id)
-
             p_merchant_id = str(merchant_id)
             p_order_id = str(txn.id)
             p_currency = currency
@@ -57,7 +56,7 @@ class CreateBillView(APIView):
             p_redirect_url = redirect_url
             p_cancel_url = cancel_url
             p_language = 'EN'
-            p_customer_identifier = str(request.user.id)
+            p_customer_identifier = str(request.user.id) + '-' + request.user.username
 
             p_billing_name = ''
             p_billing_address = ''
@@ -232,6 +231,9 @@ class PaymentResponseView(APIView):
             order.status = data.get('order_status', 'pending')
             order.save()
             if order.status == 'Success':
+                user = get_object_or_404(User, id=order.insukoon_user_id)
+                user.is_paid = True
+                user.save()
                 return HttpResponseRedirect('https://www.insukoon.com/login', content_type='text/html')
             else:
                 return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'),

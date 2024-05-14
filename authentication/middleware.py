@@ -2,6 +2,7 @@ import re
 
 from django.conf import settings
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 
@@ -14,6 +15,7 @@ class AuthMiddleware:
         if self.is_exempt_path(request.path):
             return self.get_response(request)
 
+        token = None
         # Check if the user is authenticated via token
         if 'HTTP_AUTHORIZATION' in request.META:
             try:
@@ -32,11 +34,23 @@ class AuthMiddleware:
         # if not request.user.is_email_verified:
         #     return JsonResponse({'error': 'Email not verified'}, status=403)
 
+        # Check if the requested path is exempt from payment check
+        if not self.is_exempt_path(request.path, payment_exempt=True):
+            # Check if the user is a paid user
+            request.user = token.user
+            if not request.user.is_paid:
+                return JsonResponse(
+                    {'error': 'Permission Denied. Please upgrade your account to access this feature.'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+
         return self.get_response(request)
 
-    def is_exempt_path(self, path):
+    def is_exempt_path(self, path, payment_exempt=False):
         # Check if the path matches any of the exempt patterns
-        for pattern in settings.AUTH_EXEMPT_PATHS:
+        exempt_paths = settings.AUTH_EXEMPT_PATHS
+        if payment_exempt:
+            exempt_paths = settings.AUTH_EXEMPT_PATHS + settings.PAYMENT_EXEMPT_PATHS
+
+        for pattern in exempt_paths:
             if re.match(pattern, path):
                 return True
         return False

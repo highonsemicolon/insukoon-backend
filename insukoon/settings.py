@@ -149,6 +149,11 @@ AUTH_EXEMPT_PATHS = [
     '/favicon.ico',
 ]
 
+PAYMENT_EXEMPT_PATHS = [
+    r'^/api/payment/',
+    r'^/api/payment/create/'
+]
+
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
 # CSRF_COOKIE_SAMESITE = 'Lax'
 
