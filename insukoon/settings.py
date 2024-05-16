@@ -173,7 +173,7 @@ REST_FRAMEWORK = {
 }
 
 # Disable CSRF protection for Django REST Framework API views
-REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += ['rest_framework.renderers.BrowsableAPIRenderer']
+# REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += ['rest_framework.renderers.BrowsableAPIRenderer']
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
@@ -191,5 +191,7 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL')
 
 HOST = os.environ.get('HOST')

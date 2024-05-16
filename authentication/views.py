@@ -24,7 +24,7 @@ class UserRegistrationAPIView(APIView):
             if last_user:
                 count = User.objects.last().id
 
-            username = f"INSK_{1001+count}"
+            username = f"INSK_{1001 + count}"
 
             user = serializer.save(username=username)
             token, _ = Token.objects.get_or_create(user=user)

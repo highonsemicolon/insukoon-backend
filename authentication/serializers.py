@@ -40,6 +40,22 @@ class UserSerializer(serializers.ModelSerializer):
         recipient_list = [user.email, ]
         try:
             send_mail(subject, message, email_from, recipient_list)
+
+            # Sending email notification to admin
+            if user.role == "school":
+                try:
+                    subject = f"New school just signed up - {user.username}"
+                    message = f"Username: {user.username} \nEmail: {user.email}"
+
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=email_from,
+                        recipient_list=[settings.DEFAULT_ADMIN_EMAIL, ]
+                    )
+
+                except Exception as e:
+                    print(e)
         except Exception as e:
             print(e)
 
