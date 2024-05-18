@@ -181,6 +181,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://www.insukoon.com',
     'http://localhost:63342',
+    'https://demoinsk0110001.vercel.app/',
     # Add other allowed origins as needed
 ]
 
