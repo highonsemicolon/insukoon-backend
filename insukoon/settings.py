@@ -154,6 +154,7 @@ PAYMENT_EXEMPT_PATHS = [
     r'^/api/payment/create/',
     r'^/api/profile/',
     r'^/api/auth/change-password/',
+    r'^/api/payment/status/',
 ]
 
 # CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
