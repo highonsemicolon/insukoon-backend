@@ -75,3 +75,10 @@ class TokenSerializer(serializers.Serializer):
             if user and user.is_active:
                 return data
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True)
+
+    def validate_new_password(self, value):
+        return value

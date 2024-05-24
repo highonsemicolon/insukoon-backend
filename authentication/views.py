@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import CustomUser as User
-from .serializers import UserSerializer, TokenSerializer
+from .serializers import UserSerializer, TokenSerializer, ChangePasswordSerializer
 
 
 class UserRegistrationAPIView(APIView):
@@ -19,10 +19,8 @@ class UserRegistrationAPIView(APIView):
     def put(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            count = 0
             last_user = User.objects.last()
-            if last_user:
-                count = User.objects.last().id
+            count = last_user.id if last_user else 0
 
             username = f"INSK_{1001 + count}"
 
@@ -44,6 +42,24 @@ class UserLoginAPIView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key, 'is_paid': user.is_paid}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        if not request.user.is_paid:
+            return Response({'error': 'No payment details found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            new_password = serializer.validated_data['new_password']
+            user = request.user
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)
+            return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogoutAPIView(APIView):
