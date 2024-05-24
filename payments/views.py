@@ -232,7 +232,7 @@ class PaymentResponseView(APIView):
                 user = get_object_or_404(User, id=order.insukoon_user_id)
                 user.is_paid = True
                 user.save()
-                return HttpResponseRedirect('https://www.insukoon.com/login', content_type='text/html')
+                return HttpResponseRedirect('https://www.insukoon.com/setpassword', content_type='text/html')
             else:
                 return HttpResponseRedirect(request.META.get('HOST', 'https://www.insukoon.com'),
                                             content_type='text/html')
